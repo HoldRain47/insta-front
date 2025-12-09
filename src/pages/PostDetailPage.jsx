@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPost, deletePost } from '../api';
-import { useAuth } from '../contexts/AuthContext';
+import { getPost } from '../api';
 import PostCard from '../components/PostCard';
 import '../styles/PostDetail.css';
 
 const PostDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,15 +29,8 @@ const PostDetailPage = () => {
     setPost(updatedPost);
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('게시물을 삭제하시겠습니까?')) {
-      try {
-        await deletePost(id);
-        navigate('/');
-      } catch (error) {
-        console.error('삭제 실패:', error);
-      }
-    }
+  const handleDelete = () => {
+    navigate('/');
   };
 
   if (loading) {

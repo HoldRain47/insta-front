@@ -40,7 +40,7 @@ const PostCard = ({ post, onUpdate, onDelete, showComments = false }) => {
     }
   };
 
-  const isOwner = user?.id === post.author?.id;
+  const isOwner = user && post.author && Number(user.id) === Number(post.author.id);
 
   return (
     <article className="post-card">

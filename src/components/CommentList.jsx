@@ -59,7 +59,7 @@ const CommentList = ({ postId }) => {
             {comment.author?.username}
           </Link>
           <span className="comment-content">{comment.content}</span>
-          {user?.id === comment.author?.id && (
+          {user && comment.author && Number(user.id) === Number(comment.author.id) && (
             <button
               className="comment-delete"
               onClick={() => handleDelete(comment.id)}

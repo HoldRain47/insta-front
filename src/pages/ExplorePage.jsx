@@ -17,7 +17,11 @@ const ExplorePage = () => {
     try {
       const response = await getExplore(page);
       const { content, hasNext } = response.data.data;
-      setPosts((prev) => [...prev, ...content]);
+      setPosts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newPosts = content.filter((p) => !existingIds.has(p.id));
+        return [...prev, ...newPosts];
+      });
       setHasMore(hasNext);
       setPage((prev) => prev + 1);
     } catch (error) {

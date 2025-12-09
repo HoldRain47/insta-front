@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getProfile, getUserPosts, follow, unfollow, getImageUrl } from '../api';
 import PostGrid from '../components/PostGrid';
+import FollowModal from '../components/FollowModal';
+import EditProfileModal from '../components/EditProfileModal';
 import '../styles/Profile.css';
 
 const ProfilePage = () => {
@@ -12,6 +14,8 @@ const ProfilePage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [modalType, setModalType] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -97,17 +101,25 @@ const ProfilePage = () => {
                 {profile.following ? '팔로잉' : '팔로우'}
               </button>
             )}
+            {isOwnProfile && (
+              <button
+                className="edit-profile-btn"
+                onClick={() => setShowEditModal(true)}
+              >
+                프로필 편집
+              </button>
+            )}
           </div>
           <div className="profile-stats">
             <span>
               게시물 <strong>{profile.postCount}</strong>
             </span>
-            <span>
+            <button className="stat-btn" onClick={() => setModalType('followers')}>
               팔로워 <strong>{profile.followerCount}</strong>
-            </span>
-            <span>
+            </button>
+            <button className="stat-btn" onClick={() => setModalType('following')}>
               팔로잉 <strong>{profile.followingCount}</strong>
-            </span>
+            </button>
           </div>
           <div className="profile-bio">
             <strong>{profile.name}</strong>
@@ -119,6 +131,29 @@ const ProfilePage = () => {
       <div className="profile-posts">
         <PostGrid posts={posts} />
       </div>
+
+      {modalType && (
+        <FollowModal
+          username={username}
+          type={modalType}
+          onClose={() => setModalType(null)}
+        />
+      )}
+
+      {showEditModal && (
+        <EditProfileModal
+          profile={profile}
+          onClose={() => setShowEditModal(false)}
+          onUpdate={(updatedUser) => {
+            setProfile((prev) => ({
+              ...prev,
+              name: updatedUser.name,
+              bio: updatedUser.bio,
+              profileImageUrl: updatedUser.profileImageUrl,
+            }));
+          }}
+        />
+      )}
     </div>
   );
 };
