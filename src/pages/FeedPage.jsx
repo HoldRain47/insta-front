@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getFeed } from '../api';
 import PostCard from '../components/PostCard';
 import '../styles/Feed.css';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(0);
+  const pageRef = useRef(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +15,7 @@ const FeedPage = () => {
 
   const loadPosts = async () => {
     try {
-      const response = await getFeed(page);
+      const response = await getFeed(pageRef.current);
       const { content, hasNext } = response.data.data;
       setPosts((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
@@ -23,7 +23,7 @@ const FeedPage = () => {
         return [...prev, ...newPosts];
       });
       setHasMore(hasNext);
-      setPage((prev) => prev + 1);
+      pageRef.current += 1;
     } catch (error) {
       console.error('피드 로드 실패:', error);
     } finally {
